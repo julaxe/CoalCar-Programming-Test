@@ -20,6 +20,11 @@ public class TeleportController : MonoBehaviour
     {
         rayInteractor.enabled = false;
 
+        if (inputActionProperty.reference == null)
+        {
+            Debug.LogWarning("Teleport action is not set up");
+            return;
+        }
         _thumbstickInputAction = inputActionProperty.action;
         inputActionProperty.action.performed += TeleportEnabled;
         inputActionProperty.action.canceled += TeleportReleased;

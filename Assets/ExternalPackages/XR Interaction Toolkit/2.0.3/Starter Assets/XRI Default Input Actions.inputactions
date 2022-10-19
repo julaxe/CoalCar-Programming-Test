@@ -816,6 +816,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "SpawnObject",
+                    "type": "Button",
+                    "id": "8c83c11d-5b88-46cd-a234-2fea4b829f96",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -994,6 +1003,17 @@
                     "action": "Translate Anchor",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "2aec54a2-6ade-4f82-b3f3-fadd242ee55d",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpawnObject",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
