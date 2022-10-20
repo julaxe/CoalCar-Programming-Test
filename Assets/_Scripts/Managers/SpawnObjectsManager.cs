@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Scripts.ScriptableObjects;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace _Scripts.Managers
 {
@@ -18,6 +19,10 @@ namespace _Scripts.Managers
 
        private List<GameObject> _currentSpawnableObjectsInGame;
 
+       private SpawnableObject _currentSpawnableObject;
+
+       public UnityEvent currentSpawnableChangedEvent;
+
        private void Awake()
        {
            if (Instance != null)
@@ -29,9 +34,15 @@ namespace _Scripts.Managers
            _currentSpawnableObjectsInGame = new List<GameObject>();
        }
 
-       public void SpawnObject(GameObject spawnable, Transform trans)
+       private void Start()
        {
-           var temp = Instantiate(spawnable, trans.position, trans.rotation, parentObject.transform);
+           if(availableObjects != null && availableObjects.Count > 0)
+                SetCurrentSpawnableObject(availableObjects[0]);
+       }
+
+       public void SpawnObject(Transform trans)
+       {
+           var temp = Instantiate(_currentSpawnableObject.prefab, trans.position, trans.rotation, parentObject.transform);
            _currentSpawnableObjectsInGame.Add(temp);
        }
 
@@ -41,6 +52,19 @@ namespace _Scripts.Managers
            _currentSpawnableObjectsInGame.Remove(spawnable);
            Destroy(spawnable);
        }
+
+       public void SetCurrentSpawnableObject(SpawnableObject spawnable)
+       {
+           _currentSpawnableObject = spawnable;
+           currentSpawnableChangedEvent?.Invoke();
+       }
+
+       public SpawnableObject GetCurrentSpawnableObject()
+       {
+           return _currentSpawnableObject;
+       }
+       
+       
        
 
 

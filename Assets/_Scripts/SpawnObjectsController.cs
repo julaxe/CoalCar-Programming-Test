@@ -12,8 +12,7 @@ namespace _Scripts
 
         public XRRayInteractor rayInteractor;
         public InputActionProperty inputActionProperty;
-
-        public SpawnableObject spawnableObject;
+        
         [HideInInspector] public bool isSpawning;
         
         private InputAction _spawnInputAction;
@@ -34,13 +33,10 @@ namespace _Scripts
             _spawnInputAction.performed += OnSpawnInputEntered;
             _spawnInputAction.canceled += OnSpawnInputCanceled;
 
-            //not required
-            if (spawnableObject)
-            {
-                //initialize preview if is set in the editor
-                SpawnPreviewObject(spawnableObject.previewPrefab);
-            }
+            SpawnObjectsManager.Instance.currentSpawnableChangedEvent.AddListener(OnCurrentSpawnableObjectChanged);
+
         }
+        
 
         private void Update()
         {
@@ -55,19 +51,15 @@ namespace _Scripts
                 raycastHit.point + offSetFromGround;
         }
 
-        public void SetSpawnableObject(SpawnableObject newSpawnObj)
+        private void OnCurrentSpawnableObjectChanged()
         {
-            if (spawnableObject == newSpawnObj) return;
-            
-            spawnableObject = newSpawnObj;
-            
             //change preview ref
             if (_refPreviewObject)
             {
                 Destroy(_refPreviewObject);
             }
 
-            SpawnPreviewObject(spawnableObject.previewPrefab);
+            SpawnPreviewObject(SpawnObjectsManager.Instance.GetCurrentSpawnableObject().previewPrefab);
         }
 
         private void SpawnPreviewObject(GameObject preview)
@@ -80,7 +72,7 @@ namespace _Scripts
         private void OnSpawnInputEntered(InputAction.CallbackContext context)
         {
             //check for null references
-            if (!spawnableObject || !_refPreviewObject) return;
+            if (!_refPreviewObject) return;
             
             //show ray
             rayInteractor.interactionLayers = InteractionLayerMask.GetMask("Spawnable");
@@ -102,11 +94,10 @@ namespace _Scripts
             _refPreviewObject.SetActive(false);
             
             //check if it's still valid
-            if (!spawnableObject) return;
             if (rayInteractor.TryGetCurrent3DRaycastHit(out var raycastHit))
             {
                 //spawn the object
-                SpawnObjectsManager.Instance.SpawnObject(spawnableObject.prefab, _refPreviewObject.transform);
+                SpawnObjectsManager.Instance.SpawnObject(_refPreviewObject.transform);
             }
             
         }
