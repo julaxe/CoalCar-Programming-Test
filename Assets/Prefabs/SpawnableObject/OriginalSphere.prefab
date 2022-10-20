@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6639550146209921593}
   - component: {fileID: 828115363262906429}
   - component: {fileID: -1664999249576308106}
+  - component: {fileID: 1359112181514881358}
   m_Layer: 0
   m_Name: OriginalSphere
   m_TagString: Untagged
@@ -230,3 +231,15 @@ MonoBehaviour:
   m_ForceGravityOnDetach: 0
   m_RetainTransformParent: 1
   m_AttachPointCompatibilityMode: 0
+--- !u!114 &1359112181514881358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6639550146209921592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95173737c51a4ae38a5ca4e92269ca8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

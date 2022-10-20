@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Scripts.ScriptableObjects;
+using _Scripts.Units;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -46,6 +47,31 @@ namespace _Scripts.Managers
            _currentSpawnableObjectsInGame.Add(temp);
        }
 
+       public void SpawnObjectWithSavedData(Spawnable.SaveData saveData)
+       {
+           foreach (var spawnable in availableObjects)
+           {
+               if (spawnable.id == saveData.objectId)
+               {
+                   var temp = Instantiate(_currentSpawnableObject.prefab, parentObject.transform);
+                   temp.GetComponent<Spawnable>().LoadSavedData(saveData, spawnable);
+                   _currentSpawnableObjectsInGame.Add(temp);
+                   return;
+               }
+           }
+       }
+
+       public void ClearCurrentSpawnableObjects()
+       {
+           if (_currentSpawnableObjectsInGame.Count == 0) return;
+           
+           foreach (var obj in _currentSpawnableObjectsInGame)
+           {
+               Destroy(obj);
+           }
+           _currentSpawnableObjectsInGame.Clear();
+       }
+
        public void DestroyObject(GameObject spawnable)
        {
            if (!_currentSpawnableObjectsInGame.Contains(spawnable)) return;
@@ -63,9 +89,11 @@ namespace _Scripts.Managers
        {
            return _currentSpawnableObject;
        }
-       
-       
-       
+
+       public List<GameObject> GetCurrentSpawnableObjectsInGame() => _currentSpawnableObjectsInGame;
+
+
+
 
 
     }

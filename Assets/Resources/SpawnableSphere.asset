@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7d69a88d74d4bfb9c7a106d1709fd13, type: 3}
   m_Name: SpawnableSphere
   m_EditorClassIdentifier: 
-  id: 1
+  id: 4
   sprite: {fileID: 21300000, guid: 4af767703d0b65b40b8a65632924031a, type: 3}
   prefab: {fileID: 6639550146209921592, guid: 86711441dd352424f9977d4b74f56e09, type: 3}
   previewPrefab: {fileID: 8674525407665498949, guid: 06121da71fbc9c74b9e0f1203a5778f3, type: 3}

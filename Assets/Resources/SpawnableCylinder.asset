@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7d69a88d74d4bfb9c7a106d1709fd13, type: 3}
   m_Name: SpawnableCylinder
   m_EditorClassIdentifier: 
-  id: 1
+  id: 3
   sprite: {fileID: 21300000, guid: 10be228e3c359964e96429caa58ed7b4, type: 3}
   prefab: {fileID: 7344606552938667611, guid: 3da2ec6170e8ad448b4317ac81bcc267, type: 3}
   previewPrefab: {fileID: 1399875754582530731, guid: 657bc0d7c1ee68a4c944f6b03036d368, type: 3}
