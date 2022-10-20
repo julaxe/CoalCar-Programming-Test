@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7d69a88d74d4bfb9c7a106d1709fd13, type: 3}
+  m_Name: SpawnableCapsule
+  m_EditorClassIdentifier: 
+  id: 1
+  sprite: {fileID: 0}
+  prefab: {fileID: 3753203260895825406, guid: 5ab1908e3f8a1a44e979fba0ee19e7b9, type: 3}
+  previewPrefab: {fileID: 3222977496548207417, guid: 383f01d2360b599478197c3a8eb6bede, type: 3}

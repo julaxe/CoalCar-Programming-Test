@@ -1,4 +1,6 @@
 ﻿using System;
+using _Scripts.Managers;
+using _Scripts.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -11,15 +13,16 @@ namespace _Scripts
         public XRRayInteractor rayInteractor;
         public InputActionProperty inputActionProperty;
 
-        public GameObject previewObject;
-        public GameObject realObject;
+        public SpawnableObject spawnableObject;
+        [HideInInspector] public bool isSpawning;
         
         private InputAction _spawnInputAction;
-        private GameObject _previewObject;
+        private GameObject _refPreviewObject;
+        private MeshRenderer _refPreviewObjectMeshRenderer;
 
         private void Start()
         {
-            rayInteractor.enabled = false;
+            rayInteractor.interactionLayers = InteractionLayerMask.GetMask("Interactable");
 
             if (inputActionProperty.reference == null)
             {
@@ -28,42 +31,83 @@ namespace _Scripts
             }
 
             _spawnInputAction = inputActionProperty.action;
-            _spawnInputAction.performed += SpawnPreviewObject;
-            _spawnInputAction.canceled += SpawnRealObject;
+            _spawnInputAction.performed += OnSpawnInputEntered;
+            _spawnInputAction.canceled += OnSpawnInputCanceled;
+
+            //not required
+            if (spawnableObject)
+            {
+                //initialize preview if is set in the editor
+                SpawnPreviewObject(spawnableObject.previewPrefab);
+            }
         }
 
         private void Update()
         {
-            if (_previewObject && _previewObject.activeSelf)
-            {
-                //update preview if it's active
-                if (rayInteractor.TryGetCurrent3DRaycastHit(out var raycastHit))
-                {
-                    _previewObject.transform.position =
-                        raycastHit.point + raycastHit.normal * (_previewObject.transform.localScale.y * 0.5f);
-                }
-            }
+            if (!_refPreviewObject || !_refPreviewObject.activeSelf) return;
+            
+            //update preview if it's active
+            if (!rayInteractor.TryGetCurrent3DRaycastHit(out var raycastHit)) return;
+            
+            var offSetFromGround = raycastHit.normal * _refPreviewObjectMeshRenderer.bounds.extents.y;
+            //var offSetFromGround = raycastHit.normal * (_refPreviewObject.transform.localScale.y * 0.5f);
+            _refPreviewObject.transform.position =
+                raycastHit.point + offSetFromGround;
         }
 
-        private void SpawnPreviewObject(InputAction.CallbackContext context)
+        public void SetSpawnableObject(SpawnableObject newSpawnObj)
         {
-            rayInteractor.enabled = true;
-            //get new previewObject
-            //compare previewObject with the old one
-            //if they are different then spawn a new one and delete the old one
-            if(!_previewObject)
-                _previewObject = Instantiate(previewObject);
-            _previewObject.SetActive(true);
+            if (spawnableObject == newSpawnObj) return;
+            
+            spawnableObject = newSpawnObj;
+            
+            //change preview ref
+            if (_refPreviewObject)
+            {
+                Destroy(_refPreviewObject);
+            }
+
+            SpawnPreviewObject(spawnableObject.previewPrefab);
+        }
+
+        private void SpawnPreviewObject(GameObject preview)
+        {
+            _refPreviewObject = Instantiate(preview);
+            _refPreviewObject.SetActive(false);
+            _refPreviewObjectMeshRenderer = _refPreviewObject.GetComponent<MeshRenderer>();
+        }
+
+        private void OnSpawnInputEntered(InputAction.CallbackContext context)
+        {
+            //check for null references
+            if (!spawnableObject || !_refPreviewObject) return;
+            
+            //show ray
+            rayInteractor.interactionLayers = InteractionLayerMask.GetMask("Spawnable");
+
+            //show preview
+            _refPreviewObject.SetActive(true);
+
+            isSpawning = true;
         }
         
-        private void SpawnRealObject(InputAction.CallbackContext context)
+        private void OnSpawnInputCanceled(InputAction.CallbackContext context)
         {
+            isSpawning = false;
+            rayInteractor.interactionLayers = InteractionLayerMask.GetMask("Interactable");
             
+            //check for null references
+            if (!_refPreviewObject) return;
             //hide preview
-            _previewObject.SetActive(false);
+            _refPreviewObject.SetActive(false);
+            
             //check if it's still valid
-            //spawn the object
-            rayInteractor.enabled = false;
+            if (!spawnableObject) return;
+            if (rayInteractor.TryGetCurrent3DRaycastHit(out var raycastHit))
+            {
+                //spawn the object
+                SpawnObjectsManager.Instance.SpawnObject(spawnableObject.prefab, _refPreviewObject.transform);
+            }
             
         }
     }
