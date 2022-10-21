@@ -22,7 +22,7 @@ namespace _Scripts.Managers
 
        private SpawnableObject _currentSpawnableObject;
 
-       public UnityEvent currentSpawnableChangedEvent;
+       public static Action currentSpawnableChangedEvent;
 
        private void Awake()
        {
@@ -44,6 +44,7 @@ namespace _Scripts.Managers
        public void SpawnObject(Transform trans)
        {
            var temp = Instantiate(_currentSpawnableObject.prefab, trans.position, trans.rotation, parentObject.transform);
+           temp.GetComponent<Spawnable>().SetSpawnableObject(_currentSpawnableObject);
            _currentSpawnableObjectsInGame.Add(temp);
        }
 
@@ -53,7 +54,7 @@ namespace _Scripts.Managers
            {
                if (spawnable.id == saveData.objectId)
                {
-                   var temp = Instantiate(_currentSpawnableObject.prefab, parentObject.transform);
+                   var temp = Instantiate(spawnable.prefab, parentObject.transform);
                    temp.GetComponent<Spawnable>().LoadSavedData(saveData, spawnable);
                    _currentSpawnableObjectsInGame.Add(temp);
                    return;

@@ -19,6 +19,11 @@ namespace _Scripts
         private GameObject _refPreviewObject;
         private MeshRenderer _refPreviewObjectMeshRenderer;
 
+        private void Awake()
+        {
+            SpawnObjectsManager.currentSpawnableChangedEvent += OnCurrentSpawnableObjectChanged;
+        }
+
         private void Start()
         {
             rayInteractor.interactionLayers = InteractionLayerMask.GetMask("Interactable");
@@ -32,9 +37,6 @@ namespace _Scripts
             _spawnInputAction = inputActionProperty.action;
             _spawnInputAction.performed += OnSpawnInputEntered;
             _spawnInputAction.canceled += OnSpawnInputCanceled;
-
-            SpawnObjectsManager.Instance.currentSpawnableChangedEvent.AddListener(OnCurrentSpawnableObjectChanged);
-
         }
         
 

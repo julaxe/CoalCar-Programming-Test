@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,7 +14,7 @@ namespace _Scripts.Managers
 
         private List<string> _levelNames;
 
-        [HideInInspector] public UnityEvent levelsNamesLoadedEvent;
+        public static Action levelsNamesLoadedEvent;
         private void Awake()
         {
             if (Instance != null)
@@ -48,30 +50,32 @@ namespace _Scripts.Managers
             var levelData = PlayerPrefs.GetString(levelName);
             
             //get list from level
-            var listOfObjects = JsonUtility.FromJson<List<object>>(levelData);
+            var listOfObjects = JsonHelper.FromJson<Spawnable.SaveData>(levelData).ToList();
             
             //create every single object in the game with the saved data
             foreach (var obj in listOfObjects)
             {
-                var savedData = (Spawnable.SaveData)obj;
+                var savedData = obj;
                 SpawnObjectsManager.Instance.SpawnObjectWithSavedData(savedData);
             }
         }
 
-        private void LoadLevelNames()
+        public void LoadLevelNames()
         {
+            if (!PlayerPrefs.HasKey("levels")) return;
             var list = PlayerPrefs.GetString("levels");
-            _levelNames = JsonUtility.FromJson<List<string>>(list);
+            
+            _levelNames = JsonHelper.FromJson<string>(list).ToList();
             levelsNamesLoadedEvent?.Invoke();
         }
 
-        private void SaveLevel(string levelName)
+        public void SaveLevel(string levelName)
         {
             //get dictionary
             var currentObjectsInGame = SpawnObjectsManager.Instance.GetCurrentSpawnableObjectsInGame();
             
             //create new dictionary with saved data
-            var listOfObjects = new List<object>();
+            var listOfObjects = new List<Spawnable.SaveData>();
             
             foreach (var spawnable in currentObjectsInGame)
             {
@@ -80,27 +84,68 @@ namespace _Scripts.Managers
             
 
             //saved serialized dictionary
-            PlayerPrefs.SetString(levelName, JsonUtility.ToJson(listOfObjects));
+            var jsonList = JsonHelper.ToJson<Spawnable.SaveData>(listOfObjects.ToArray());
+            PlayerPrefs.SetString(levelName, jsonList);
+            
+            Debug.Log(levelName + " saved!");
             
             //Add another level to the list
+            if (_levelNames.Contains(levelName)) return;
             _levelNames.Add(levelName);
-            PlayerPrefs.SetString("levels", JsonUtility.ToJson(_levelNames));
+            var jsonNames = JsonHelper.ToJson<string>(_levelNames.ToArray());
+            PlayerPrefs.SetString("levels",jsonNames);
             levelsNamesLoadedEvent?.Invoke();
-            
-            PlayerPrefs.Save();
+        }
+        
+        public void DeleteData()
+        {
+            PlayerPrefs.DeleteAll();
+            Debug.Log("Data deleted");
+        }
+        public List<string> GetCurrentLevelNames() => _levelNames;
+
+    }
+
+    [CustomEditor(typeof(SaveAndLoadManager))]
+    public class SaveAndLLoadManagerEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            var manager = (SaveAndLoadManager)target;
+            if (GUILayout.Button("Delete Data"))
+            {
+                manager.DeleteData();
+            }
+        }
+    }
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
+            return wrapper.Items;
+        }
+
+        public static string ToJson<T>(T[] array)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.Items = array;
+            return JsonUtility.ToJson(wrapper);
+        }
+
+        public static string ToJson<T>(T[] array, bool prettyPrint)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
+            wrapper.Items = array;
+            return JsonUtility.ToJson(wrapper, prettyPrint);
         }
 
         [Serializable]
-        public struct Level
+        private class Wrapper<T>
         {
-            public string levelName;
-            public object levelData;
-        }
-
-        public struct LevelData
-        {
-            public string objectId;
-            public object savedData;
+            public T[] Items;
         }
     }
 }

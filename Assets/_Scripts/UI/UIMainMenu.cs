@@ -16,17 +16,16 @@ namespace _Scripts.UI
             editorButton.onClick.AddListener(() =>
             {
                 UIManager.Instance.SetUIScreen(UIManager.UIScreen.Editor);
-                Debug.Log("Editor button pressed");
             });
             saveButton.onClick.AddListener(() =>
             {
                 UIManager.Instance.SetUIScreen(UIManager.UIScreen.SaveGame);
-                Debug.Log("Save button pressed");
+                SaveAndLoadManager.Instance.LoadLevelNames();
             });
             loadButton.onClick.AddListener(() =>
             {
                 UIManager.Instance.SetUIScreen(UIManager.UIScreen.LoadGame);
-                Debug.Log("Load button pressed");
+                SaveAndLoadManager.Instance.LoadLevelNames();
             });
         }
     }

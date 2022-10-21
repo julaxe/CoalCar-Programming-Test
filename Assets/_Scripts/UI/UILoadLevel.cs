@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 namespace _Scripts.UI
 {
-    public class UISaveLevel : MonoBehaviour
+    public class UILoadLevel : MonoBehaviour
     {
         [SerializeField] private Button backButton;
-        [SerializeField] private Button newLevelButton;
+        [SerializeField] private Button refreshButton;
         
         //parent transform for the buttons
         [SerializeField] private GameObject content;
@@ -27,9 +27,9 @@ namespace _Scripts.UI
             {
                 UIManager.Instance.SetUIScreen(UIManager.UIScreen.MainMenu);
             });
-            newLevelButton.onClick.AddListener(() =>
+            refreshButton.onClick.AddListener(() =>
             {
-                SaveAndLoadManager.Instance.SaveCurrentLevel();
+                SaveAndLoadManager.Instance.LoadLevelNames();
             });
         }
 
@@ -40,16 +40,16 @@ namespace _Scripts.UI
             
             for (int i = _listNumber; i < list.Count; i++)
             {
-                SpawnsSaveGameUIButton(list[i]);
+                SpawnsLoadGameUIButton(list[i]);
             }
         }
 
-        private void SpawnsSaveGameUIButton(string levelName)
+        private void SpawnsLoadGameUIButton(string levelName)
         {
             var button = Instantiate(buttonPrefab, content.transform);
             button.GetComponent<Button>().onClick.AddListener(() =>
             {
-                SaveAndLoadManager.Instance.SaveLevel(levelName);
+                SaveAndLoadManager.Instance.LoadLevel(levelName);
             });
             button.GetComponentInChildren<TextMeshProUGUI>().text = levelName;
             _listNumber++;

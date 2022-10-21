@@ -17,7 +17,7 @@ namespace _Scripts.Units
             spawnableObject = spawnable;
         }
 
-        public object GetSaveData()
+        public SaveData GetSaveData()
         {
             var storedTransform = transform;
             var position = storedTransform.position;

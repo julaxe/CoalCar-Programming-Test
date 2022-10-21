@@ -13,14 +13,18 @@ namespace _Scripts.UI
         [SerializeField] private GameObject uISpawnablePrefab;
         [SerializeField] private Image currentObjectImage;
 
+        private void Awake()
+        {
+            SpawnObjectsManager.currentSpawnableChangedEvent += OnSpawnableChanged;
+        }
+
         private void Start()
         {
             backButton.onClick.AddListener(() =>
             {
                 UIManager.Instance.SetUIScreen(UIManager.UIScreen.MainMenu);
             });
-
-            SpawnObjectsManager.Instance.currentSpawnableChangedEvent.AddListener(OnSpawnableChanged);
+            
             PopulateContent();
         }
 
