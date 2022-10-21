@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace _Scripts.Managers
 {
@@ -105,21 +103,7 @@ namespace _Scripts.Managers
         public List<string> GetCurrentLevelNames() => _levelNames;
 
     }
-
-    [CustomEditor(typeof(SaveAndLoadManager))]
-    public class SaveAndLLoadManagerEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-
-            var manager = (SaveAndLoadManager)target;
-            if (GUILayout.Button("Delete Data"))
-            {
-                manager.DeleteData();
-            }
-        }
-    }
+    
     public static class JsonHelper
     {
         public static T[] FromJson<T>(string json)
